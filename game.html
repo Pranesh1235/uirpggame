@@ -57,7 +57,7 @@
     <div id="control-popup">
       <h2>Game Controls</h2>
       <p>Use <strong>W</strong>, <strong>A</strong>, <strong>S</strong>, <strong>D</strong> to move.</p>
-      <p>Click the button below to start the game in fullscreen mode.</p>
+      <p>Click the button below to start the game.</p>
       <button id="start-game">Start Game</button>
     </div>
 
@@ -106,9 +106,6 @@
           progressBarFull.style.width = 100 * progress + "%";
         }).then((unityInstance) => {
           loadingBar.style.display = "none";
-          fullscreenButton.onclick = () => {
-            unityInstance.SetFullscreen(1);
-          };
 
           // Show the popup before starting the game
           const overlay = document.querySelector("#overlay");
@@ -122,19 +119,8 @@
             overlay.style.display = "none";
             popup.style.display = "none";
             
-            // Enter fullscreen mode using the Fullscreen API
-            if (document.documentElement.requestFullscreen) {
-              document.documentElement.requestFullscreen();
-            } else if (document.documentElement.mozRequestFullScreen) { // Firefox
-              document.documentElement.mozRequestFullScreen();
-            } else if (document.documentElement.webkitRequestFullscreen) { // Chrome, Safari and Opera
-              document.documentElement.webkitRequestFullscreen();
-            } else if (document.documentElement.msRequestFullscreen) { // IE/Edge
-              document.documentElement.msRequestFullscreen();
-            }
-
-            // Start the Unity instance in fullscreen
-            unityInstance.SetFullscreen(1); // Ensure Unity also enters fullscreen mode
+            // Start the Unity instance without going into fullscreen
+            unityInstance.SetFullscreen(0); // Normal mode
           };
         }).catch((message) => {
           alert(message);
