@@ -1,0 +1,104 @@
+/* General Styling */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #000;
+  margin: 0;
+  padding: 0;
+}
+
+/* Navbar Styling (Top) */
+.navbar {
+  border: none;
+  padding: 0.8rem 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+.navbar-brand {
+  font-weight: bold;
+  color: #fff;
+}
+
+.navbar-nav {
+  display: flex;
+  margin-left: auto;
+}
+
+.nav-link {
+  color: #ccc;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+/* Button Animation */
+.btn {
+  position: relative;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 30px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  color: #fff;
+}
+
+.pulse-btn {
+  overflow: hidden;
+}
+
+.pulse-btn:hover {
+  background-color: transparent;
+  color: #fff;
+  border-color: #fff;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+}
+
+/* Border Animation Effect */
+.pulse-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200%;
+  height: 200%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(0);
+  border-radius: 50%;
+  z-index: -1;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.pulse-btn:hover::after {
+  transform: scale(1);
+  opacity: 0;
+}
+
+/* Card Styling */
+.card {
+  border-radius: 12px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+}
+
+.card-img-top {
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+/* Footer */
+footer {
+  background-color: #121212;
+  padding: 1rem;
+  color: #ccc;
+}
+
+/* Margin adjustments */
+.mt-5 {
+  margin-top: 5rem;
+}
+
