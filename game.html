@@ -121,7 +121,20 @@
           startButton.onclick = () => {
             overlay.style.display = "none";
             popup.style.display = "none";
-            unityInstance.SetFullscreen(1); // Start game in fullscreen
+            
+            // Enter fullscreen mode using the Fullscreen API
+            if (document.documentElement.requestFullscreen) {
+              document.documentElement.requestFullscreen();
+            } else if (document.documentElement.mozRequestFullScreen) { // Firefox
+              document.documentElement.mozRequestFullScreen();
+            } else if (document.documentElement.webkitRequestFullscreen) { // Chrome, Safari and Opera
+              document.documentElement.webkitRequestFullscreen();
+            } else if (document.documentElement.msRequestFullscreen) { // IE/Edge
+              document.documentElement.msRequestFullscreen();
+            }
+
+            // Start the Unity instance in fullscreen
+            unityInstance.SetFullscreen(1); // Ensure Unity also enters fullscreen mode
           };
         }).catch((message) => {
           alert(message);
