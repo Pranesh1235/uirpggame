@@ -7,62 +7,29 @@
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
     <style>
-      /* Modal Styles */
+      /* Style for the control popup */
       #control-popup {
-        display: none;
-        position: fixed;
-        top: 50%;
+        position: absolute;
+        top: 20%;
         left: 50%;
-        transform: translate(-50%, -50%);
-        width: 400px;
-        background: white;
+        transform: translateX(-50%);
         padding: 20px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        z-index: 1000;
-        text-align: center;
-        border-radius: 10px;
-      }
-      #control-popup h2 {
-        margin-bottom: 10px;
-      }
-      #control-popup p {
-        margin-bottom: 20px;
-      }
-      #control-popup button {
-        padding: 10px 20px;
-        background: #0078d7;
+        background-color: rgba(0, 0, 0, 0.7);
         color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 16px;
-      }
-      #control-popup button:hover {
-        background: #005bb5;
-      }
-      #overlay {
+        font-size: 18px;
+        border-radius: 10px;
+        text-align: center;
         display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.7);
-        z-index: 999;
+        z-index: 9999;
+      }
+      #control-popup.show {
+        display: block;
       }
     </style>
   </head>
   <body>
-    <div id="overlay"></div>
-    <div id="control-popup">
-      <h2>Game Controls</h2>
-      <p>Use <strong>W</strong>, <strong>A</strong>, <strong>S</strong>, <strong>D</strong> to move.</p>
-      <p>Click the button below to start the game.</p>
-      <button id="start-game">Start Game</button>
-    </div>
-
     <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas" width="960" height="600" tabindex="-1"></canvas>
+      <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
       <div id="unity-loading-bar">
         <div id="unity-logo"></div>
         <div id="unity-progress-bar-empty">
@@ -77,6 +44,16 @@
       </div>
     </div>
 
+    <!-- Pop-up control guide -->
+    <div id="control-popup">
+      <h3>WASD Controls:</h3>
+      <p>W - Move Up</p>
+      <p>A - Move Left</p>
+      <p>S - Move Down</p>
+      <p>D - Move Right</p>
+      <p>Press any key to start the game</p>
+    </div>
+
     <script>
       var container = document.querySelector("#unity-container");
       var canvas = document.querySelector("#unity-canvas");
@@ -84,6 +61,27 @@
       var progressBarFull = document.querySelector("#unity-progress-bar-full");
       var fullscreenButton = document.querySelector("#unity-fullscreen-button");
       var warningBanner = document.querySelector("#unity-warning");
+
+      // Shows a temporary message banner/ribbon for a few seconds, or
+      // a permanent error message on top of the canvas if type=='error'.
+      // If type=='warning', a yellow highlight color is used.
+      function unityShowBanner(msg, type) {
+        function updateBannerVisibility() {
+          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+        }
+        var div = document.createElement('div');
+        div.innerHTML = msg;
+        warningBanner.appendChild(div);
+        if (type == 'error') div.style = 'background: red; padding: 10px;';
+        else {
+          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+          setTimeout(function() {
+            warningBanner.removeChild(div);
+            updateBannerVisibility();
+          }, 5000);
+        }
+        updateBannerVisibility();
+      }
 
       var buildUrl = "Build";
       var loaderUrl = buildUrl + "/uiux.loader.js";
@@ -95,7 +93,20 @@
         companyName: "DefaultCompany",
         productName: "GAME UI",
         productVersion: "1.0",
+        showBanner: unityShowBanner,
       };
+
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        var meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+        document.getElementsByTagName('head')[0].appendChild(meta);
+        container.className = "unity-mobile";
+        canvas.className = "unity-mobile";
+      } else {
+        canvas.style.width = "960px";
+        canvas.style.height = "600px";
+      }
 
       loadingBar.style.display = "block";
 
@@ -106,28 +117,25 @@
           progressBarFull.style.width = 100 * progress + "%";
         }).then((unityInstance) => {
           loadingBar.style.display = "none";
-
-          // Show the popup before starting the game
-          const overlay = document.querySelector("#overlay");
-          const popup = document.querySelector("#control-popup");
-          const startButton = document.querySelector("#start-game");
-
-          overlay.style.display = "block";
-          popup.style.display = "block";
-
-          startButton.onclick = () => {
-            overlay.style.display = "none";
-            popup.style.display = "none";
-            
-            // Start the Unity instance without going into fullscreen
-            unityInstance.SetFullscreen(0); // Normal mode
+          fullscreenButton.onclick = () => {
+            unityInstance.SetFullscreen(1);
           };
         }).catch((message) => {
           alert(message);
         });
       };
-
       document.body.appendChild(script);
+
+      // Display the control guide on page load and remove it when any key is pressed
+      window.onload = () => {
+        var controlPopup = document.getElementById("control-popup");
+        controlPopup.classList.add("show");
+      };
+
+      document.addEventListener('keydown', function () {
+        var controlPopup = document.getElementById("control-popup");
+        controlPopup.classList.remove("show");
+      });
     </script>
   </body>
 </html>
